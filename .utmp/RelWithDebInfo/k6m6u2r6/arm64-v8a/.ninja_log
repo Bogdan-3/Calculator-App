@@ -1,12 +1,12 @@
 # ninja log v5
-56	608	7524275040831574	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	487bdedb4d32fe7
-609	1077	7524275045192335	C:/Users/Bogdan/Documents/GitHub/Calculator-App/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/k6m6u2r6/obj/arm64-v8a/libswappywrapper.so	df11501f76f639f0
-29	1681	7524275051485006	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	eba67972ac2b92a5
-49	1735	7524275052032466	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	2f5e073681061429
-8	1736	7524275052122937	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	1ce502da782d3989
-23	1779	7524275052570819	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	3075323e39bc590b
-43	1804	7524275052767358	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	def87f302f3cd795
-1	1868	7524275053485357	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	c21409b3a581c033
-36	2007	7524275054895281	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	c99a9a8a19a8e307
-15	2098	7524275055781213	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	9e1a21d686cdd76b
-2098	2195	7524275056807759	C:/Users/Bogdan/Documents/GitHub/Calculator-App/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/k6m6u2r6/obj/arm64-v8a/libgame.so	6194821aaef1fa62
+63	553	7525211507075580	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	487bdedb4d32fe7
+555	807	7525211509733576	C:/Users/Bogdan/Documents/GitHub/Calculator-App/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/k6m6u2r6/obj/arm64-v8a/libswappywrapper.so	df11501f76f639f0
+33	1393	7525211515325475	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	eba67972ac2b92a5
+40	1406	7525211515718275	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	3075323e39bc590b
+21	1413	7525211515753630	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	1ce502da782d3989
+46	1446	7525211516101444	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	2f5e073681061429
+53	1519	7525211516851067	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	def87f302f3cd795
+2	1600	7525211517693798	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	c21409b3a581c033
+27	1758	7525211519334952	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	c99a9a8a19a8e307
+14	1839	7525211520116270	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	9e1a21d686cdd76b
+1839	1957	7525211521303508	C:/Users/Bogdan/Documents/GitHub/Calculator-App/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/k6m6u2r6/obj/arm64-v8a/libgame.so	6194821aaef1fa62

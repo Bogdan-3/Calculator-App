@@ -1,22 +1,23 @@
 using UnityEngine;
 using TMPro;
 using System;
+using Unity.VisualScripting;
 
 public class Number_Button_Manager : MonoBehaviour
 {
     double nr = 0;
     double nr2 = 0;
     double aux;
-    char operatie = '\0';
-    bool calc = true;
+    string operatie = null;
     bool coma = false;
-    double p=10;
+    bool nr1 = true;
+    double p = 10;
     public TMP_Text Score;
     public TMP_Text Calc;
 
     void Afis()
     {
-        if (operatie == '\0' || calc == true)
+        if (nr1==true)
         {
             Score.text = nr.ToString();
         }
@@ -34,7 +35,6 @@ public class Number_Button_Manager : MonoBehaviour
     public void Coma()
     {
         coma = true;
-        Afis();
     }
 
     private void resetComa()
@@ -45,187 +45,46 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void equal()
     {
-        calc = true;
         aux = nr2;
         Calc.text = nr.ToString() + operatie + aux.ToString() + '=';
-        if (operatie == '+')
+        if (operatie == "+")
             nr += aux;
-        if (operatie == '-')
+        if (operatie == "-")
             nr -= aux;
-        if (operatie == '*')
+        if (operatie == "*")
             nr *= aux;
-        if (operatie == '/')
+        if (operatie == "/")
             nr /= aux;
-        if (operatie == '^')
+        if (operatie == "^")
             nr = Math.Pow(nr, aux);
+        nr1=true;
         Afis();
         resetComa();
+        nr1= false;
     }
 
-    public void Sum()
+    public void Operatie(string Operatie)
     {
-        resetComa() ;
-        Calc.gameObject.SetActive(true);
-        if (calc == true)
+        resetComa();
+        Calc.gameObject.SetActive(true);  
+        if (operatie == null)
         {
-            calc = false;
-            operatie = '\0';
-            nr2 = 0;
-        }
-        if (operatie == '\0')
-        {
-            operatie = '+';
+            operatie = Operatie;
+            nr1 = false;
         }
         else
         {
-            if (operatie == '+')
+            if (operatie == "+")
                 nr += nr2;
-            if (operatie == '-')
+            if (operatie == "-")
                 nr -= nr2;
-            if (operatie == '*')
+            if (operatie == "*")
                 nr *= nr2;
-            if (operatie == '/')
+            if (operatie == "/")
                 nr /= nr2;
-            if (operatie == '^')
+            if (operatie == "^")
                 nr = Math.Pow(nr, nr2);
-            operatie = '+';
-            calc = true;
-            nr2 = 0;
-        }
-        Afis();
-        Calc.text = nr.ToString() + operatie;
-    }
-
-    public void Dif()
-    {
-        resetComa();
-        Calc.gameObject.SetActive(true);
-        if (calc == true)
-        {
-            calc = false;
-            operatie = '\0';
-            nr2 = 0;
-        }
-        if (operatie == '\0')
-        {
-            operatie = '-';
-        }
-        else
-        {
-            if (operatie == '+')
-                nr += nr2;
-            if (operatie == '-')
-                nr -= nr2;
-            if (operatie == '*')
-                nr *= nr2;
-            if (operatie == '/')
-                nr /= nr2;
-            if (operatie == '^')
-                nr = Math.Pow(nr, nr2);
-            operatie = '-';
-            calc = true;
-            nr2 = 0;
-        }
-        Afis();
-        Calc.text = nr.ToString() + operatie;
-    }
-
-    public void Multiply()
-    {
-        resetComa();
-        Calc.gameObject.SetActive(true);
-        if (calc == true)
-        {
-            calc = false;
-            operatie = '\0';
-            nr2 = 0;
-        }
-        if (operatie == '\0')
-        {
-            operatie = '*';
-        }
-        else
-        {
-            if (operatie == '+')
-                nr += nr2;
-            if (operatie == '-')
-                nr -= nr2;
-            if (operatie == '*')
-                nr *= nr2;
-            if (operatie == '/')
-                nr /= nr2;
-            if (operatie == '^')
-                nr = Math.Pow(nr, nr2);
-            operatie = '*';
-            calc = true;
-            nr2 = 0;
-        }
-        Afis();
-        Calc.text = nr.ToString() + operatie;
-    }
-
-    public void Power()
-    {
-        resetComa();
-        Calc.gameObject.SetActive(true);
-        if (calc == true)
-        {
-            calc = false;
-            operatie = '\0';
-            nr2 = 0;
-        }
-        if (operatie == '\0')
-        {
-            operatie = '^';
-        }
-        else
-        {
-            if (operatie == '+')
-                nr += nr2;
-            if (operatie == '-')
-                nr -= nr2;
-            if (operatie == '*')
-                nr *= nr2;
-            if (operatie == '/')
-                nr /= nr2;
-            if (operatie == '^')
-                nr = Math.Pow(nr, nr2);
-            operatie = '^';
-            calc = true;
-            nr2 = 0;
-        }
-        Afis();
-        Calc.text = nr.ToString() + operatie;
-    }
-
-    public void Division()
-    {
-        resetComa();
-        Calc.gameObject.SetActive(true);
-        if (calc == true)
-        {
-            calc = false;
-            operatie = '\0';
-            nr2 = 0;
-        }
-        if (operatie == '\0')
-        {
-            operatie = '/';
-        }
-        else
-        {
-            if (operatie == '+')
-                nr += nr2;
-            if (operatie == '-')
-                nr -= nr2;
-            if (operatie == '*')
-                nr *= nr2;
-            if (operatie == '/')
-                nr /= nr2;
-            if (operatie == '^')
-                nr = Math.Pow(nr, nr2);
-            operatie = '/';
-            calc = true;
+            operatie = Operatie;
             nr2 = 0;
         }
         Afis();
@@ -234,10 +93,27 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void procent()
     {
-        if (operatie == '\0')
+        if (nr1 == true)
             nr /= 100;
         else
             nr2 /= 100;
+        Afis();
+    }
+
+    public void BACK()
+    {
+        if (nr1==true)
+        {
+            int x = (int)nr;
+            x /= 10;
+            nr = (float)x;
+        }
+        else
+        {
+            int x = (int)nr2;
+            x /= 10;
+            nr2 = (float)x;
+        }
         Afis();
     }
 
@@ -248,264 +124,40 @@ public class Number_Button_Manager : MonoBehaviour
         nr = 0;
         nr2 = 0;
         p = 10f;
-        operatie = '\0';
+        nr1=true;
+        operatie = null;
         Afis();
     }
 
     public void semn()
     {
-        if (operatie == '\0')
+        if (nr1 == true)
             nr = nr * (-1);
         else
             nr2 = nr2 * (-1);
         Afis();
     }
 
-    public void zero()
+    public void Number(float number)
     {
         if (coma == false)
         {
-            if (operatie == '\0')
-                nr = nr * 10 + 0f;
+            if (nr1 == true)
+                nr = nr * 10 + number;
             else
-                nr2 = nr2 * 10 + 0f;
+                nr2 = nr2 * 10 + number;
         }
         else
         {
-            if (operatie == '\0')
+            if (nr1 == true)
             {
-                nr = nr + 0f / p;
+                nr = nr + number / p;
                 p *= 10f;
             }
             else
             {
-                nr2 = nr2 + 0f/p;
+                nr2 = nr2 + number / p;
                 p *= 10f;
-            }
-        }
-        Afis();
-    }
-
-    public void one()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 1;
-            else
-                nr2 = nr2 * 10 + 1;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 1 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 1 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void two()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 2;
-            else
-                nr2 = nr2 * 10 + 2;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 2 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 2 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void three()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 3;
-            else
-                nr2 = nr2 * 10 + 3;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 3 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 3 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void four()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 4;
-            else
-                nr2 = nr2 * 10 + 4;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 4 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 4 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void five()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 5;
-            else
-                nr2 = nr2 * 10 + 5;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 5 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 5 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void six()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 6;
-            else
-                nr2 = nr2 * 10 + 6;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 6 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 6 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void seven()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 7;
-            else
-                nr2 = nr2 * 10 + 7;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 7 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 7 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void eight()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 8;
-            else
-                nr2 = nr2 * 10 + 8;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 8 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 8 / p;
-                p *= 10;
-            }
-        }
-        Afis();
-    }
-
-    public void nine()
-    {
-        if (coma == false)
-        {
-            if (operatie == '\0')
-                nr = nr * 10 + 9;
-            else
-                nr2 = nr2 * 10 + 9;
-        }
-        else
-        {
-            if (operatie == '\0')
-            {
-                nr = nr + 9 / p;
-                p *= 10;
-            }
-            else
-            {
-                nr2 = nr2 + 9 / p;
-                p *= 10;
             }
         }
         Afis();
