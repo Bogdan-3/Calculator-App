@@ -11,6 +11,7 @@ public class Number_Button_Manager : MonoBehaviour
     string operatie = null;
     bool coma = false;
     bool nr1 = true;
+    bool egal=false;
     double p = 10;
     public TMP_Text Score;
     public TMP_Text Calc;
@@ -46,6 +47,7 @@ public class Number_Button_Manager : MonoBehaviour
     public void equal()
     {
         aux = nr2;
+        egal = true;
         Calc.text = nr.ToString() + operatie + aux.ToString() + '=';
         if (operatie == "+")
             nr += aux;
@@ -66,7 +68,13 @@ public class Number_Button_Manager : MonoBehaviour
     public void Operatie(string Operatie)
     {
         resetComa();
-        Calc.gameObject.SetActive(true);  
+        Calc.gameObject.SetActive(true);
+        if(egal==true)
+        {
+            egal = false;
+            operatie = null;
+            nr2 = 0;
+        }
         if (operatie == null)
         {
             operatie = Operatie;
