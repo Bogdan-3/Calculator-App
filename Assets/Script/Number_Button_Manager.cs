@@ -11,14 +11,14 @@ public class Number_Button_Manager : MonoBehaviour
     string operatie = null;
     bool coma = false;
     bool nr1 = true;
-    bool egal=false;
+    bool egal = false;
     double p = 10;
     public TMP_Text Score;
     public TMP_Text Calc;
 
     void Afis()
     {
-        if (nr1==true)
+        if (nr1 == true)
         {
             Score.text = nr.ToString();
         }
@@ -59,17 +59,17 @@ public class Number_Button_Manager : MonoBehaviour
             nr /= aux;
         if (operatie == "^")
             nr = Math.Pow(nr, aux);
-        nr1=true;
+        nr1 = true;
         Afis();
         resetComa();
-        nr1= false;
+        nr1 = false;
     }
 
     public void Operatie(string Operatie)
     {
         resetComa();
         Calc.gameObject.SetActive(true);
-        if(egal==true)
+        if (egal == true)
         {
             egal = false;
             operatie = null;
@@ -110,18 +110,60 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void BACK()
     {
-        if (nr1==true)
+        if (nr1 == true)
         {
-            int x = (int)nr;
-            x /= 10;
-            nr = (float)x;
+            if (coma == false)
+            {
+                int x = (int)nr;
+                x /= 10;
+                nr = (float)x;
+            }
+            else
+            {
+                nr = nr * p;
+                int x = (int)nr;
+                x /= 10;
+                nr = (float)x;
+                if (p > 10)
+                {
+                    p /= 10;
+                    nr /= p;
+                }
+            }
         }
         else
         {
-            int x = (int)nr2;
-            x /= 10;
-            nr2 = (float)x;
+            if (coma == false)
+            {
+                int x = (int)nr2;
+                x /= 10;
+                nr2 = (float)x;
+            }
+            else
+            {
+
+                nr2 = nr2 * p;
+                int x = (int)nr2;
+                x /= 10;
+                nr2 = (float)x;
+                if (p > 10)
+                {
+                    p /= 10;
+                    nr2 /= p;
+                }
+            }
         }
+        Afis();
+    }
+
+    public void clearEntry()
+    {
+        resetComa();
+        if (nr1 == true)
+            nr = 0;
+        else
+            nr2 = 0;       
+        p = 10f;
         Afis();
     }
 
@@ -132,7 +174,7 @@ public class Number_Button_Manager : MonoBehaviour
         nr = 0;
         nr2 = 0;
         p = 10f;
-        nr1=true;
+        nr1 = true;
         operatie = null;
         Afis();
     }
@@ -143,6 +185,24 @@ public class Number_Button_Manager : MonoBehaviour
             nr = nr * (-1);
         else
             nr2 = nr2 * (-1);
+        Afis();
+    }
+
+    public void fraction()
+    {
+        if (nr1 == true)
+            nr = 1/nr;
+        else
+            nr2 = 1/nr2;
+        Afis();
+    }
+
+    public void sqrt()
+    {
+        if (nr1 == true)
+            nr = Math.Sqrt(nr);
+        else
+            nr2 = Math.Sqrt(nr2);
         Afis();
     }
 
