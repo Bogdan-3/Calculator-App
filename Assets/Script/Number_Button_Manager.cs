@@ -1,10 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System;
 using Unity.VisualScripting;
 
 public class Number_Button_Manager : MonoBehaviour
 {
+    bool Semn = true;
     double nr = 0;
     double nr2 = 0;
     double aux;
@@ -46,6 +47,7 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void equal()
     {
+        Semn = true;
         aux = nr2;
         egal = true;
         Calc.text = nr.ToString() + operatie + aux.ToString() + '=';
@@ -62,13 +64,13 @@ public class Number_Button_Manager : MonoBehaviour
         nr1 = true;
         Afis();
         resetComa();
-        nr1 = false;
     }
 
     public void Operatie(string Operatie)
     {
         resetComa();
         Calc.gameObject.SetActive(true);
+        Semn = true;
         if (egal == true)
         {
             egal = false;
@@ -162,8 +164,9 @@ public class Number_Button_Manager : MonoBehaviour
         if (nr1 == true)
             nr = 0;
         else
-            nr2 = 0;       
+            nr2 = 0;
         p = 10f;
+        Semn=true;
         Afis();
     }
 
@@ -175,12 +178,17 @@ public class Number_Button_Manager : MonoBehaviour
         nr2 = 0;
         p = 10f;
         nr1 = true;
+        Semn=true;
         operatie = null;
         Afis();
     }
 
     public void semn()
     {
+        if (Semn == true)
+            Semn = false;
+        else
+            Semn = true;
         if (nr1 == true)
             nr = nr * (-1);
         else
@@ -190,15 +198,19 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void fraction()
     {
+        Calc.gameObject.SetActive(true);
+        Calc.text = "1/" + nr.ToString();
         if (nr1 == true)
-            nr = 1/nr;
+            nr = 1 / nr;
         else
-            nr2 = 1/nr2;
+            nr2 = 1 / nr2;
         Afis();
     }
 
     public void sqrt()
     {
+        Calc.gameObject.SetActive(true);
+        Calc.text = "√" + nr.ToString();
         if (nr1 == true)
             nr = Math.Sqrt(nr);
         else
@@ -210,22 +222,48 @@ public class Number_Button_Manager : MonoBehaviour
     {
         if (coma == false)
         {
-            if (nr1 == true)
-                nr = nr * 10 + number;
-            else
-                nr2 = nr2 * 10 + number;
-        }
-        else
-        {
-            if (nr1 == true)
+            if (Semn == true)
             {
-                nr = nr + number / p;
-                p *= 10f;
+                if (nr1 == true)
+                    nr = nr * 10 + number;
+                else
+                    nr2 = nr2 * 10 + number;
             }
             else
             {
-                nr2 = nr2 + number / p;
-                p *= 10f;
+                if (nr1 == true)
+                    nr = nr * 10 + number * (-1);
+                else
+                    nr2 = nr2 * 10 + number * (-1);
+            }
+        }
+        else
+        {
+            if (Semn == true)
+            {
+                if (nr1 == true)
+                {
+                    nr = nr + number / p;
+                    p *= 10f;
+                }
+                else
+                {
+                    nr2 = nr2 + number / p;
+                    p *= 10f;
+                }
+            }
+            else
+            {
+                if (nr1 == true)
+                {
+                    nr = nr + number / p * (-1);
+                    p *= 10f;
+                }
+                else
+                {
+                    nr2 = nr2 + number / p * (-1);
+                    p *= 10f;
+                }
             }
         }
         Afis();
