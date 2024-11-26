@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using TMPro;
 using System;
-using Unity.VisualScripting;
 
 public class Number_Button_Manager : MonoBehaviour
 {
@@ -10,39 +9,29 @@ public class Number_Button_Manager : MonoBehaviour
     double nr2 = 0;
     double aux;
     string operatie = null;
-    bool coma = false;
     bool nr1 = true;
     bool egal = false;
-    double p = 10;
+    double p = 1;
     public TMP_Text Score;
     public TMP_Text Calc;
 
     void Afis()
     {
         if (nr1 == true)
-        {
             Score.text = nr.ToString();
-        }
         else
-        {
             Score.text = nr2.ToString();
-        }
-    }
-
-    private void Start()
-    {
-        Afis();
     }
 
     public void Coma()
     {
-        coma = true;
+        if (p == 1)
+            p = 10;
     }
 
     private void resetComa()
     {
-        coma = false;
-        p = 10;
+        p = 1;
     }
 
     public void equal()
@@ -103,6 +92,8 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void procent()
     {
+        Calc.gameObject.SetActive(true);
+        Calc.text = nr.ToString() + '%';
         if (nr1 == true)
             nr /= 100;
         else
@@ -114,19 +105,18 @@ public class Number_Button_Manager : MonoBehaviour
     {
         if (nr1 == true)
         {
-            if (coma == false)
+            if (p == 1)
             {
-                int x = (int)nr;
+                long x = Convert.ToInt64(nr);
                 x /= 10;
-                nr = (float)x;
+                nr = (double)x;
             }
             else
             {
-                nr = nr * p;
-                int x = (int)nr;
+                long x = Convert.ToInt64(nr * p);
                 x /= 10;
-                nr = (float)x;
-                if (p > 10)
+                nr = (double)x;
+                if (p > 1)
                 {
                     p /= 10;
                     nr /= p;
@@ -135,20 +125,18 @@ public class Number_Button_Manager : MonoBehaviour
         }
         else
         {
-            if (coma == false)
+            if (p == 1)
             {
-                int x = (int)nr2;
+                long x = Convert.ToInt64(nr2);
                 x /= 10;
-                nr2 = (float)x;
+                nr2 = (double)x;
             }
             else
             {
-
-                nr2 = nr2 * p;
-                int x = (int)nr2;
+                long x = Convert.ToInt64(nr2 * p);
                 x /= 10;
-                nr2 = (float)x;
-                if (p > 10)
+                nr2 = (double)x;
+                if (p > 1)
                 {
                     p /= 10;
                     nr2 /= p;
@@ -165,8 +153,8 @@ public class Number_Button_Manager : MonoBehaviour
             nr = 0;
         else
             nr2 = 0;
-        p = 10f;
-        Semn=true;
+        p = 1;
+        Semn = true;
         Afis();
     }
 
@@ -176,9 +164,9 @@ public class Number_Button_Manager : MonoBehaviour
         Calc.gameObject.SetActive(false);
         nr = 0;
         nr2 = 0;
-        p = 10f;
+        p = 1;
         nr1 = true;
-        Semn=true;
+        Semn = true;
         operatie = null;
         Afis();
     }
@@ -220,52 +208,27 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void Number(float number)
     {
-        if (coma == false)
-        {
-            if (Semn == true)
-            {
-                if (nr1 == true)
-                    nr = nr * 10 + number;
-                else
-                    nr2 = nr2 * 10 + number;
-            }
+        if (p == 1)
+            if (nr1 == true)
+                nr *= 10;
             else
-            {
-                if (nr1 == true)
-                    nr = nr * 10 + number * (-1);
-                else
-                    nr2 = nr2 * 10 + number * (-1);
-            }
+                nr2 *= 10;
+        if (Semn == true)
+        {
+            if (nr1 == true)
+                nr += number / p;
+            else
+                nr2 += number / p;
         }
         else
         {
-            if (Semn == true)
-            {
-                if (nr1 == true)
-                {
-                    nr = nr + number / p;
-                    p *= 10f;
-                }
-                else
-                {
-                    nr2 = nr2 + number / p;
-                    p *= 10f;
-                }
-            }
+            if (nr1 == true)
+                nr += number / p * (-1);
             else
-            {
-                if (nr1 == true)
-                {
-                    nr = nr + number / p * (-1);
-                    p *= 10f;
-                }
-                else
-                {
-                    nr2 = nr2 + number / p * (-1);
-                    p *= 10f;
-                }
-            }
+                nr2 += number / p * (-1);
         }
+        if (p >= 10)
+            p *= 10;
         Afis();
     }
 }
