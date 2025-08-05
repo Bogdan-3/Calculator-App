@@ -1,234 +1,190 @@
 ﻿using UnityEngine;
 using TMPro;
 using System;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 
 public class Number_Button_Manager : MonoBehaviour
 {
-    bool Semn = true;
-    double nr = 0;
-    double nr2 = 0;
-    double aux;
-    string operatie = null;
-    bool nr1 = true;
-    bool egal = false;
-    double p = 1;
-    public TMP_Text Score;
-    public TMP_Text Calc;
-
-    void Afis()
+    string text = "";
+    bool open = true;
+    Dictionary<char, int> fr = new Dictionary<char, int>
     {
-        if (nr1 == true)
-            Score.text = nr.ToString();
-        else
-            Score.text = nr2.ToString();
-    }
+    {'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}
+    };
+    List<string> fp = new List<string>();
+    Stack<char> st = new Stack<char>();
+    Stack<float> nr = new Stack<float>();
+    public TextMeshProUGUI Result;
+    public TextMeshProUGUI Calc;
+    public int maxDigitsBeforeDecimal = 6;
+    public int maxDigitsAfterDecimal = 2;
 
-    public void Coma()
+    public void clear()
     {
-        if (p == 1)
-            p = 10;
-    }
-
-    private void resetComa()
-    {
-        p = 1;
+        open = true;
+        text = "";
+        Calc.text = text;
+        Result.text = "";
     }
 
     public void equal()
     {
-        Semn = true;
-        aux = nr2;
-        egal = true;
-        Calc.text = nr.ToString() + operatie + aux.ToString() + '=';
-        if (operatie == "+")
-            nr += aux;
-        if (operatie == "-")
-            nr -= aux;
-        if (operatie == "*")
-            nr *= aux;
-        if (operatie == "/")
-            nr /= aux;
-        if (operatie == "^")
-            nr = Math.Pow(nr, aux);
-        nr1 = true;
-        Afis();
-        resetComa();
+        form_polish();
+        calculare();
+        print(string.Join(" ", fp));
+        float x = nr.Pop();
+        text = "";
+        open = true;
+        Result.text = Convert.ToString(x);
     }
 
-    public void Operatie(string Operatie)
+    void form_polish()
     {
-        resetComa();
-        Calc.gameObject.SetActive(true);
-        Semn = true;
-        if (egal == true)
-        {
-            egal = false;
-            operatie = null;
-            nr2 = 0;
-        }
-        if (operatie == null)
-        {
-            operatie = Operatie;
-            nr1 = false;
-        }
-        else
-        {
-            if (operatie == "+")
-                nr += nr2;
-            if (operatie == "-")
-                nr -= nr2;
-            if (operatie == "*")
-                nr *= nr2;
-            if (operatie == "/")
-                nr /= nr2;
-            if (operatie == "^")
-                nr = Math.Pow(nr, nr2);
-            operatie = Operatie;
-            nr2 = 0;
-        }
-        Afis();
-        Calc.text = nr.ToString() + operatie;
-    }
+        fp.Clear();
+        st.Clear();
+        string number = "";
+        bool buildingNumber = false;
 
-    public void procent()
-    {
-        Calc.gameObject.SetActive(true);
-        Calc.text = nr.ToString() + '%';
-        if (nr1 == true)
-            nr /= 100;
-        else
-            nr2 /= 100;
-        Afis();
-    }
-
-    public void BACK()
-    {
-        if (nr1 == true)
+        for (int i = 0; i < text.Length; i++)
         {
-            if (p == 1)
+            char c = text[i];
+
+            if (char.IsDigit(c) || c == '.')
             {
-                long x = Convert.ToInt64(nr);
-                x /= 10;
-                nr = (double)x;
+                number += c;
+                buildingNumber = true;
             }
             else
             {
-                long x = Convert.ToInt64(nr * p);
-                x /= 10;
-                nr = (double)x;
-                if (p > 1)
+                if (buildingNumber)
                 {
-                    p /= 10;
-                    nr /= p;
+                    fp.Add(number);
+                    number = "";
+                    buildingNumber = false;
+                }
+
+                if (c == '(')
+                {
+                    st.Push(c);
+                }
+                else if (c == ')')
+                {
+                    while (st.Count > 0 && st.Peek() != '(')
+                        fp.Add(st.Pop().ToString());
+                    if (st.Count > 0 && st.Peek() == '(')
+                        st.Pop();
+                }
+                else if ("+-*/".Contains(c))
+                {
+                    while (st.Count > 0 && st.Peek() != '(' && fr[st.Peek()] >= fr[c])
+                        fp.Add(st.Pop().ToString());
+                    st.Push(c);
                 }
             }
         }
-        else
+
+        if (buildingNumber)
         {
-            if (p == 1)
+            fp.Add(number);
+        }
+
+        while (st.Count > 0)
+        {
+            fp.Add(st.Pop().ToString());
+        }
+    }
+
+    void calculare()
+    {
+        nr.Clear();
+        foreach (string token in fp)
+            if (float.TryParse(token, out float value))
+                nr.Push(value); // E un număr → îl pui pe stivă
+            else
             {
-                long x = Convert.ToInt64(nr2);
-                x /= 10;
-                nr2 = (double)x;
+                // E un operator → scoți 2 numere și aplici operația
+                float b = nr.Pop(); // ultimul intrat
+                float a = nr.Pop(); // înaintea lui
+                if (token == "+")
+                    nr.Push(a + b);
+                else if (token == "-")
+                    nr.Push(a - b);
+                else if (token == "*")
+                    nr.Push(a * b);
+                else if (token == "/")
+                    nr.Push(a / b);
+            }
+    }
+
+    public void create_calc(string x)
+    {
+        Result.text = "";
+
+        if ("+-*/".Contains(x))
+        {
+            if (text.Length > 0 && "+-*/".Contains(text[^1].ToString()))
+            {
+                text = text.Substring(0, text.Length - 1) + x;
             }
             else
             {
-                long x = Convert.ToInt64(nr2 * p);
-                x /= 10;
-                nr2 = (double)x;
-                if (p > 1)
+                text += x;
+            }
+        }
+        else
+        {
+            // Get the current number being built
+            int lastOp = text.LastIndexOfAny("+-*/()".ToCharArray());
+            string currentNumber = (lastOp == -1) ? text : text.Substring(lastOp + 1);
+
+            bool hasDot = currentNumber.Contains(".");
+            int digitsBeforeDot = hasDot ? currentNumber.IndexOf('.') : currentNumber.Length;
+            int digitsAfterDot = hasDot ? currentNumber.Length - currentNumber.IndexOf('.') - 1 : 0;
+
+            if (x == ".")
+            {
+                // Allow only one dot
+                if (!hasDot && currentNumber.Length > 0) // prevent just starting with "."
+                    text += x;
+            }
+            else if (char.IsDigit(x[0]))
+            {
+                if (!hasDot && digitsBeforeDot < maxDigitsBeforeDecimal)
                 {
-                    p /= 10;
-                    nr2 /= p;
+                    text += x;
+                }
+                else if (hasDot && digitsAfterDot < maxDigitsAfterDecimal)
+                {
+                    text += x;
                 }
             }
         }
-        Afis();
+
+        Calc.text = text;
     }
 
-    public void clearEntry()
+    public void parantese()
     {
-        resetComa();
-        if (nr1 == true)
-            nr = 0;
-        else
-            nr2 = 0;
-        p = 1;
-        Semn = true;
-        Afis();
-    }
-
-    public void clear()
-    {
-        resetComa();
-        Calc.gameObject.SetActive(false);
-        nr = 0;
-        nr2 = 0;
-        p = 1;
-        nr1 = true;
-        Semn = true;
-        operatie = null;
-        Afis();
-    }
-
-    public void semn()
-    {
-        if (Semn == true)
-            Semn = false;
-        else
-            Semn = true;
-        if (nr1 == true)
-            nr = nr * (-1);
-        else
-            nr2 = nr2 * (-1);
-        Afis();
-    }
-
-    public void fraction()
-    {
-        Calc.gameObject.SetActive(true);
-        Calc.text = "1/" + nr.ToString();
-        if (nr1 == true)
-            nr = 1 / nr;
-        else
-            nr2 = 1 / nr2;
-        Afis();
-    }
-
-    public void sqrt()
-    {
-        Calc.gameObject.SetActive(true);
-        Calc.text = "√" + nr.ToString();
-        if (nr1 == true)
-            nr = Math.Sqrt(nr);
-        else
-            nr2 = Math.Sqrt(nr2);
-        Afis();
-    }
-
-    public void Number(float number)
-    {
-        if (p == 1)
-            if (nr1 == true)
-                nr *= 10;
-            else
-                nr2 *= 10;
-        if (Semn == true)
+        if (open == true)
         {
-            if (nr1 == true)
-                nr += number / p;
-            else
-                nr2 += number / p;
+            open = false;
+            text += "(";
         }
         else
         {
-            if (nr1 == true)
-                nr += number / p * (-1);
-            else
-                nr2 += number / p * (-1);
+            open = true;
+            text += ")";
         }
-        if (p >= 10)
-            p *= 10;
-        Afis();
+        Calc.text = text;
+    }
+
+    public void backspace()
+    {
+        if (text.Length > 0)
+        {
+            text = text.Remove(text.Length - 1);
+            Calc.text = text;
+        }
     }
 }
