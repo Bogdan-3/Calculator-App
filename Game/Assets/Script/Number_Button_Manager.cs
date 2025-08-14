@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine.Rendering.Universal;
+using System.Globalization;
+
 
 public class Number_Button_Manager : MonoBehaviour
 {
@@ -45,7 +47,7 @@ public class Number_Button_Manager : MonoBehaviour
         x = nr.Pop();
         text = "0";
         open = true;
-        Result.text = Convert.ToString(x);
+        Result.text = x.ToString(CultureInfo.InvariantCulture);
     }
 
     void form_polish()
@@ -108,7 +110,7 @@ public class Number_Button_Manager : MonoBehaviour
     {
         nr.Clear();
         foreach (string token in fp)
-            if (float.TryParse(token, out float value))
+            if (float.TryParse(token, NumberStyles.Float, CultureInfo.InvariantCulture, out float value))
                 nr.Push(value); // E un număr → îl pui pe stivă
             else
             {
@@ -132,7 +134,7 @@ public class Number_Button_Manager : MonoBehaviour
 
         if ("+-*/".Contains(x))
         {
-            if (text.Length > 0 && "+-*/".Contains(text[^1].ToString()))
+            if (text.Length > 0 && "+-*/.".Contains(text[^1].ToString()))
             {
                 text = text.Substring(0, text.Length - 1) + x;
             }
@@ -190,6 +192,10 @@ public class Number_Button_Manager : MonoBehaviour
                     text = "(";
                 else
                     text += "*(";
+            }
+            else if (text.Length > 0 && text[^1] == '.')
+            {
+                text = text.Substring(0, text.Length - 1) + "*(";
             }
             else
             {
