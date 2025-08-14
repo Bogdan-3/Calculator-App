@@ -3,15 +3,17 @@ using TMPro;
 using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEngine.Rendering.Universal;
 
 public class Number_Button_Manager : MonoBehaviour
 {
-    string text = "";
+    string text = "0";
     bool open = true;
     Dictionary<char, int> fr = new Dictionary<char, int>
     {
     {'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}
     };
+    float x;
     List<string> fp = new List<string>();
     Stack<char> st = new Stack<char>();
     Stack<float> nr = new Stack<float>();
@@ -23,18 +25,25 @@ public class Number_Button_Manager : MonoBehaviour
     public void clear()
     {
         open = true;
-        text = "";
+        text = "0";
         Calc.text = text;
         Result.text = "";
     }
 
     public void equal()
     {
+        if (!verif())
+            return;
+
         form_polish();
         calculare();
-        print(string.Join(" ", fp));
-        float x = nr.Pop();
-        text = "";
+        if (nr.Count != 1)
+        {
+            Result.text = "Eroare: expresia este incompletă";
+            return;
+        }
+        x = nr.Pop();
+        text = "0";
         open = true;
         Result.text = Convert.ToString(x);
     }
@@ -150,9 +159,15 @@ public class Number_Button_Manager : MonoBehaviour
             }
             else if (char.IsDigit(x[0]))
             {
+                if (text.Length > 0)
+                    if (text[^1] == ')')
+                        text += "*";
                 if (!hasDot && digitsBeforeDot < maxDigitsBeforeDecimal)
                 {
-                    text += x;
+                    if (digitsBeforeDot == 1 && currentNumber == "0")
+                        text = text.Substring(0, text.Length - 1) + x;
+                    else
+                        text += x;
                 }
                 else if (hasDot && digitsAfterDot < maxDigitsAfterDecimal)
                 {
@@ -169,7 +184,17 @@ public class Number_Button_Manager : MonoBehaviour
         if (open == true)
         {
             open = false;
-            text += "(";
+            if (text.Length > 0 && char.IsDigit(text[^1]))
+            {
+                if (text.Length == 1 && text[0] == '0')
+                    text = "(";
+                else
+                    text += "*(";
+            }
+            else
+            {
+                text += "(";
+            }
         }
         else
         {
@@ -183,8 +208,44 @@ public class Number_Button_Manager : MonoBehaviour
     {
         if (text.Length > 0)
         {
+            if (text[^1] == '(')
+                open = true;
+            else if (text[^1] == ')')
+                open = false;
             text = text.Remove(text.Length - 1);
             Calc.text = text;
         }
+    }
+
+
+    bool verif()
+    {
+        //este calc gol?
+        if (text.Length == 0)
+        {
+            return false;
+        }
+
+        //verific paranteze
+        int balance = 0;
+        foreach (char c in text)
+        {
+            if (c == '(') balance++;
+            if (c == ')') balance--;
+        }
+        if (balance != 0)
+        {
+            Result.text = "Eroare: paranteze nepereche";
+            return false;
+        }
+
+        //se termina cu operator
+        if ("+-*/".Contains(text[^1]))
+        {
+            Result.text = "Eroare: expresia se termină cu operator";
+            return false;
+        }
+
+        return true;
     }
 }
