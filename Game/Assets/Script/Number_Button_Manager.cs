@@ -1,16 +1,11 @@
 ﻿using UnityEngine;
 using TMPro;
-using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEngine.Rendering.Universal;
 using System.Globalization;
-
 
 public class Number_Button_Manager : MonoBehaviour
 {
-    string text = "0";
-    bool open = true;
+    string text = "";
     Dictionary<char, int> fr = new Dictionary<char, int>
     {
     {'+', 1}, {'-', 1}, {'*', 2}, {'/', 2}
@@ -26,8 +21,7 @@ public class Number_Button_Manager : MonoBehaviour
 
     public void clear()
     {
-        open = true;
-        text = "0";
+        text = "";
         Calc.text = text;
         Result.text = "";
     }
@@ -45,8 +39,7 @@ public class Number_Button_Manager : MonoBehaviour
             return;
         }
         x = nr.Pop();
-        text = "0";
-        open = true;
+        text = "";
         Result.text = x.ToString(CultureInfo.InvariantCulture);
     }
 
@@ -76,9 +69,7 @@ public class Number_Button_Manager : MonoBehaviour
                 }
 
                 if (c == '(')
-                {
                     st.Push(c);
-                }
                 else if (c == ')')
                 {
                     while (st.Count > 0 && st.Peek() != '(')
@@ -96,14 +87,10 @@ public class Number_Button_Manager : MonoBehaviour
         }
 
         if (buildingNumber)
-        {
             fp.Add(number);
-        }
 
         while (st.Count > 0)
-        {
             fp.Add(st.Pop().ToString());
-        }
     }
 
     void calculare()
@@ -134,14 +121,30 @@ public class Number_Button_Manager : MonoBehaviour
 
         if ("+-*/".Contains(x))
         {
-            if (text.Length > 0 && "+-*/.".Contains(text[^1].ToString()))
-            {
+            if (text.Length > 0 && "+-*/".Contains(text[^1].ToString()))
                 text = text.Substring(0, text.Length - 1) + x;
+            else if (text.Length == 0 && "+-".Contains(x))
+                text = text + "0" + x;
+            else if (text.Length == 0 && "*/".Contains(x))
+                text = text + "1" + x;
+            else if (text[^1] == '.')
+                text = text + "0" + x;
+            else
+                text += x;
+        }
+        else if ("()".Contains(x))
+        {
+            if (x == "(")
+            {
+                if (text.Length>0 && text[^1] == '.')
+                    text += "0";
+                if (text.Length > 0 && char.IsDigit(text[^1]))
+                    text += "*(";
+                else
+                    text += "(";
             }
             else
-            {
-                text += x;
-            }
+                text += ")";
         }
         else
         {
@@ -158,12 +161,13 @@ public class Number_Button_Manager : MonoBehaviour
                 // Allow only one dot
                 if (!hasDot && currentNumber.Length > 0) // prevent just starting with "."
                     text += x;
+                else if (!hasDot && currentNumber.Length == 0)
+                    text += "0.";
             }
             else if (char.IsDigit(x[0]))
             {
-                if (text.Length > 0)
-                    if (text[^1] == ')')
-                        text += "*";
+                if (text.Length > 0 && text[^1] == ')')
+                    text += "*";
                 if (!hasDot && digitsBeforeDot < maxDigitsBeforeDecimal)
                 {
                     if (digitsBeforeDot == 1 && currentNumber == "0")
@@ -172,41 +176,10 @@ public class Number_Button_Manager : MonoBehaviour
                         text += x;
                 }
                 else if (hasDot && digitsAfterDot < maxDigitsAfterDecimal)
-                {
                     text += x;
-                }
             }
         }
 
-        Calc.text = text;
-    }
-
-    public void parantese()
-    {
-        if (open == true)
-        {
-            open = false;
-            if (text.Length > 0 && char.IsDigit(text[^1]))
-            {
-                if (text.Length == 1 && text[0] == '0')
-                    text = "(";
-                else
-                    text += "*(";
-            }
-            else if (text.Length > 0 && text[^1] == '.')
-            {
-                text = text.Substring(0, text.Length - 1) + "*(";
-            }
-            else
-            {
-                text += "(";
-            }
-        }
-        else
-        {
-            open = true;
-            text += ")";
-        }
         Calc.text = text;
     }
 
@@ -214,10 +187,6 @@ public class Number_Button_Manager : MonoBehaviour
     {
         if (text.Length > 0)
         {
-            if (text[^1] == '(')
-                open = true;
-            else if (text[^1] == ')')
-                open = false;
             text = text.Remove(text.Length - 1);
             Calc.text = text;
         }
@@ -228,9 +197,7 @@ public class Number_Button_Manager : MonoBehaviour
     {
         //este calc gol?
         if (text.Length == 0)
-        {
             return false;
-        }
 
         //verific paranteze
         int balance = 0;
@@ -238,17 +205,22 @@ public class Number_Button_Manager : MonoBehaviour
         {
             if (c == '(') balance++;
             if (c == ')') balance--;
+            if (balance < 0)
+            {
+                Result.text = "Bitch, () nu )(";
+                return false;
+            }
         }
         if (balance != 0)
         {
-            Result.text = "Eroare: paranteze nepereche";
+            Result.text = "Bitch, nu inchizi ()";
             return false;
         }
 
         //se termina cu operator
         if ("+-*/".Contains(text[^1]))
         {
-            Result.text = "Eroare: expresia se termină cu operator";
+            Result.text = "Bitch, operator la final";
             return false;
         }
 
