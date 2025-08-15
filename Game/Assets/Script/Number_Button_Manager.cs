@@ -138,7 +138,7 @@ public class Number_Button_Manager : MonoBehaviour
             {
                 if (text.Length>0 && text[^1] == '.')
                     text += "0";
-                if (text.Length > 0 && char.IsDigit(text[^1]))
+                if (text.Length > 0 && (char.IsDigit(text[^1]) || text[^1]==')'))
                     text += "*(";
                 else
                     text += "(";
