@@ -18,6 +18,7 @@ public class Number_Button_Manager : MonoBehaviour
     public TextMeshProUGUI Calc;
     public int maxDigitsBeforeDecimal = 6;
     public int maxDigitsAfterDecimal = 2;
+    float nrsum=0, nrmult=1;
 
     public void clear()
     {
@@ -39,6 +40,7 @@ public class Number_Button_Manager : MonoBehaviour
             return;
         }
         x = nr.Pop();
+        nrsum=nrmult = x;
         text = "";
         Result.text = x.ToString(CultureInfo.InvariantCulture);
     }
@@ -124,21 +126,23 @@ public class Number_Button_Manager : MonoBehaviour
             if (text.Length > 0 && "+-*/".Contains(text[^1].ToString()))
                 text = text.Substring(0, text.Length - 1) + x;
             else if (text.Length == 0 && "+-".Contains(x))
-                text = text + "0" + x;
+                text = text + nrsum + x;
             else if (text.Length == 0 && "*/".Contains(x))
-                text = text + "1" + x;
+                text = text + nrmult + x;
             else if (text[^1] == '.')
                 text = text + "0" + x;
             else
                 text += x;
+            nrsum = 0;
+            nrmult = 1;
         }
         else if ("()".Contains(x))
         {
             if (x == "(")
             {
-                if (text.Length>0 && text[^1] == '.')
+                if (text.Length > 0 && text[^1] == '.')
                     text += "0";
-                if (text.Length > 0 && (char.IsDigit(text[^1]) || text[^1]==')'))
+                if (text.Length > 0 && (char.IsDigit(text[^1]) || text[^1] == ')'))
                     text += "*(";
                 else
                     text += "(";
